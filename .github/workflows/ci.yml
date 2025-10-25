@@ -1,0 +1,51 @@
+name: Eatrofit CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Validate PHP syntax
+        run: |
+          find ./api -name '*.php' -exec php -l {} \;
+      - name: Validate SQL schema
+        run: |
+          cat ./sql/schema.sql
+      - name: Run frontend lint (HTML)
+        run: |
+          cat ./public/*.html
+      - name: Install PHPUnit
+        run: |
+          composer require --dev phpunit/phpunit
+      - name: Run PHPUnit tests
+        run: |
+          if [ -d tests ]; then ./vendor/bin/phpunit --testdox; fi
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install Cypress
+        run: |
+          npm install cypress --save-dev
+      - name: Run Cypress tests
+        run: |
+          if [ -d cypress ]; then npx cypress run; fi
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: eatrofit-app
+          path: |
+            public/
+            api/
+            config/
+            sql/
+            admin/
+            docs/

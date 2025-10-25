@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meal Log | Eatrofit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; }
+    @media (max-width: 576px) {
+      .container { padding: 0 5px; }
+      h2 { font-size: 1.2rem; }
+      .table th, .table td { font-size: 0.9rem; padding: 0.4rem; }
+      .btn, input, select { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    window.onerror = function(msg, url, line, col, error) {
+  fetch('./api/error_log.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({msg, url, line, col, error: error && error.stack})
+      });
+    };
+    // Auth check
+  fetch('./api/auth.php')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.authenticated) {
+          window.location.href = 'login.html';
+        }
+      });
+  </script>
+  <div class="container py-4">
+    <h2 class="mb-3 text-center">Meal Log</h2>
+    <div class="mb-3">
+      <form id="addMealForm" class="row g-2 align-items-center">
+        <div class="col-5">
+          <input type="text" class="form-control" id="mealName" placeholder="Meal name" required>
+        </div>
+        <div class="col-3">
+          <input type="number" class="form-control" id="calories" placeholder="Calories" required>
+        </div>
+        <div class="col-4">
+          <button type="submit" class="btn btn-success w-100"><i class="bi bi-plus-circle"></i> Log Meal</button>
+        </div>
+      </form>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle" id="mealTable">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Meal</th>
+            <th>Calories</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script>
+    function loadMeals() {
+      // TODO: Implement get meals API if available
+      // For now, just clear table
+      document.querySelector('#mealTable tbody').innerHTML = '';
+    }
+    loadMeals();
+    // Add meal log
+    $('#addMealForm').on('submit', function(e) {
+      e.preventDefault();
+      const name = $('#mealName').val();
+      const calories = $('#calories').val();
+  $.post('./api/log_meal.php', {name, calories}, function(resp) {
+        if (resp.success) {
+          $('#mealName').val('');
+          $('#calories').val('');
+          loadMeals();
+        } else {
+          alert(resp.error || 'Failed to log meal');
+        }
+      }, 'json');
+    });
+  </script>
+</body>
+</html>

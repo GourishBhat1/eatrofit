@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Eatrofit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <h2 class="mb-4">Admin Dashboard</h2>
+    <div class="row g-3">
+      <div class="col-6 col-md-3">
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h6 class="card-title">Total Users</h6>
+            <p class="card-text" id="userCount">--</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h6 class="card-title">Engagement</h6>
+            <p class="card-text" id="engagement">--</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h6 class="card-title">Workouts</h6>
+            <p class="card-text" id="workoutCount">--</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h6 class="card-title">Feedback</h6>
+            <p class="card-text" id="feedbackCount">--</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 d-flex flex-wrap gap-2 justify-content-center">
+      <a href="users.html" class="btn btn-primary flex-fill">Manage Users</a>
+      <a href="workouts.html" class="btn btn-success flex-fill">Manage Workouts</a>
+      <a href="analytics.html" class="btn btn-info flex-fill">Analytics</a>
+      <a href="feedback.html" class="btn btn-warning flex-fill">Review Feedback</a>
+    </div>
+  </div>
+  <script>
+    // Fetch admin stats from backend
+  fetch('../api/admin_stats.php')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('userCount').textContent = data.userCount;
+        document.getElementById('engagement').textContent = data.engagement;
+        document.getElementById('workoutCount').textContent = data.workoutCount;
+        document.getElementById('feedbackCount').textContent = data.feedbackCount;
+      });
+  </script>
+</body>
+</html>
