@@ -19,12 +19,12 @@
       </div>
     </div>
     <div class="mb-3">
-      <a href="/api/export_progress_csv.php?user_id=1" class="btn btn-outline-primary">Export to CSV</a>
-      <a href="/api/print_summary.php?user_id=1" target="_blank" class="btn btn-outline-secondary">Printable Summary</a>
+  <a href="../api/export_progress_csv.php?user_id=1" class="btn btn-outline-primary">Export to CSV</a>
+  <a href="../api/print_summary.php?user_id=1" target="_blank" class="btn btn-outline-secondary">Printable Summary</a>
     </div>
   </div>
   <script>
-  fetch('./api/get_progress_report?user_id=1')
+  fetch('../api/get_progress_report?user_id=1')
       .then(res => res.json())
       .then(data => {
         // BMI Chart

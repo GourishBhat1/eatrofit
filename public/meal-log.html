@@ -19,20 +19,20 @@
 <body>
   <script>
     window.onerror = function(msg, url, line, col, error) {
-  fetch('./api/error_log.php', {
+  fetch('../api/error_log.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({msg, url, line, col, error: error && error.stack})
       });
     };
-    // Auth check
-  fetch('./api/auth.php')
-      .then(res => res.json())
-      .then(data => {
-        if (!data.authenticated) {
-          window.location.href = 'login.html';
-        }
-      });
+    // Auth check (disabled for now)
+    // fetch('../api/auth.php')
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     if (!data.authenticated) {
+    //       window.location.href = 'login.html';
+    //     }
+    //   });
   </script>
   <div class="container py-4">
     <h2 class="mb-3 text-center">Meal Log</h2>
@@ -76,7 +76,7 @@
       e.preventDefault();
       const name = $('#mealName').val();
       const calories = $('#calories').val();
-  $.post('./api/log_meal.php', {name, calories}, function(resp) {
+  $.post('../api/log_meal.php', {name, calories}, function(resp) {
         if (resp.success) {
           $('#mealName').val('');
           $('#calories').val('');

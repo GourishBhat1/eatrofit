@@ -19,20 +19,20 @@
 <body>
   <script>
     window.onerror = function(msg, url, line, col, error) {
-  fetch('./api/error_log.php', {
+  fetch('../api/error_log.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({msg, url, line, col, error: error && error.stack})
       });
     };
-    // Auth check
-  fetch('./api/auth.php')
-      .then(res => res.json())
-      .then(data => {
-        if (!data.authenticated) {
-          window.location.href = 'login.html';
-        }
-      });
+    // Auth check (disabled for now)
+    // fetch('../api/auth.php')
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     if (!data.authenticated) {
+    //       window.location.href = 'login.html';
+    //     }
+    //   });
   </script>
   <div class="container py-4">
     <h2 class="mb-3 text-center">Workout Log</h2>
@@ -66,7 +66,7 @@
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script>
     function loadWorkouts() {
-  fetch('./api/get_workouts.php')
+  fetch('../api/get_workouts.php')
         .then(res => res.json())
         .then(data => {
           const tbody = document.querySelector('#workoutTable tbody');
@@ -87,7 +87,7 @@
       e.preventDefault();
       const name = $('#workoutName').val();
       const duration = $('#duration').val();
-  $.post('./api/add_workout_log.php', {name, duration}, function(resp) {
+  $.post('../api/add_workout_log.php', {name, duration}, function(resp) {
         if (resp.success) {
           $('#workoutName').val('');
           $('#duration').val('');

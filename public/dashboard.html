@@ -64,16 +64,16 @@
     </div>
   </div>
   <script>
-    // Simple token check
-    // if (!localStorage.getItem('token')) {
-    //   window.location.href = 'login.html';
-    // }
-    // document.getElementById('logoutBtn').onclick = function() {
-    //   localStorage.removeItem('token');
-    //   window.location.href = 'login.html';
-    // };
+  // Simple token check (disabled for now)
+  // if (!localStorage.getItem('token')) {
+  //   window.location.href = 'login.html';
+  // }
+  // document.getElementById('logoutBtn').onclick = function() {
+  //   localStorage.removeItem('token');
+  //   window.location.href = 'login.html';
+  // };
     // Fetch dashboard summary
-  fetch('./api/get_dashboard_summary?user_id=1')
+  fetch('../api/get_dashboard_summary?user_id=1')
       .then(res => res.json())
       .then(data => {
         document.getElementById('userName').textContent = data.name || 'User';

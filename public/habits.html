@@ -19,20 +19,20 @@
 <body>
   <script>
     window.onerror = function(msg, url, line, col, error) {
-  fetch('./api/error_log.php', {
+  fetch('../api/error_log.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({msg, url, line, col, error: error && error.stack})
       });
     };
-    // Auth check
-  fetch('./api/auth.php')
-      .then(res => res.json())
-      .then(data => {
-        if (!data.authenticated) {
-          window.location.href = 'login.html';
-        }
-      });
+    // Auth check (disabled for now)
+    // fetch('../api/auth.php')
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     if (!data.authenticated) {
+    //       window.location.href = 'login.html';
+    //     }
+    //   });
   </script>
   <div class="container py-4">
     <h2 class="mb-3 text-center">My Habits</h2>
@@ -63,7 +63,7 @@
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script>
     function loadHabits() {
-  fetch('./api/get_habits.php')
+  fetch('../api/get_habits.php')
         .then(res => res.json())
         .then(data => {
           const tbody = document.querySelector('#habitsTable tbody');
@@ -86,7 +86,7 @@
     $('#addHabitForm').on('submit', function(e) {
       e.preventDefault();
       const habitText = $('#habitText').val();
-  $.post('./api/add_habit.php', {habit_text: habitText}, function(resp) {
+  $.post('../api/add_habit.php', {habit_text: habitText}, function(resp) {
         if (resp.success) {
           $('#habitText').val('');
           loadHabits();
@@ -99,7 +99,7 @@
     $('#habitsTable').on('click', '.update-streak', function() {
       const row = $(this).closest('tr');
       const habitId = row.find('td').eq(0).text();
-  $.post('./api/update_habit_streak.php', {id: habitId}, function(resp) {
+  $.post('../api/update_habit_streak.php', {id: habitId}, function(resp) {
         if (resp.success) {
           loadHabits();
         } else {

@@ -33,7 +33,7 @@
       const reminder_text = document.getElementById('reminderText').value;
       const reminder_time = document.getElementById('reminderTime').value;
       const reminder_date = document.getElementById('reminderDate').value;
-  const res = await fetch('./api/add_reminder.php', {
+  const res = await fetch('../api/add_reminder.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({user_id, reminder_text, reminder_time, reminder_date})
