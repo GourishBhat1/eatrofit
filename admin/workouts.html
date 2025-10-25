@@ -74,7 +74,6 @@
           $('#workoutsTable').on('click', '.delete-workout', function() {
               const row = $(this).closest('tr');
               const workoutId = row.find('td').eq(0).text();
-              const adminToken = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
               Swal.fire({
                 title: 'Are you sure?',
                 text: 'This will permanently delete the workout.',
@@ -89,16 +88,11 @@
                 }
               }).then((result) => {
                 if (result.isConfirmed) {
-                  if (!adminToken) {
-                    Swal.fire('Error', 'Not authenticated', 'error');
-                    return;
-                  }
                   Swal.getConfirmButton().disabled = true;
                   fetch('../api/admin_delete_workout.php', {
                     method: 'POST',
                     headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + adminToken
+                      'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ id: workoutId })
                   })

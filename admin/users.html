@@ -13,11 +13,7 @@
 </head>
 <body class="bg-light">
   <script>
-  // Admin authentication check
-  const adminToken = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
-  if (!adminToken) {
-    window.location.href = '../public/login.html';
-  }
+  // Removed admin authentication check
   </script>
   <div class="container py-4">
     <h2 class="mb-3 text-center">User Management</h2>
@@ -50,10 +46,8 @@
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script>
-  // Fetch users with Authorization header and render safely
-  fetch('../api/admin_get_users.php', {
-    headers: { 'Authorization': 'Bearer ' + (adminToken || '') }
-  })
+  // Fetch users and render safely
+  fetch('../api/admin_get_users.php')
     .then(res => res.json())
     .then(data => {
       const tbody = document.querySelector('#usersTable tbody');
@@ -110,7 +104,6 @@
                 type: 'POST',
                 url: '../api/admin_delete_user.php',
                 data: {id: userId},
-                headers: { 'Authorization': 'Bearer ' + (adminToken || '') },
                 dataType: 'json',
                 success: function(resp) {
                   if (resp.success) {

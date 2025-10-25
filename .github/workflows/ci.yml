@@ -11,8 +11,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: eatrofit
+          MYSQL_ROOT_PASSWORD: Mx?OlKw2R/
+          MYSQL_DATABASE: u929750551_eatrofit
+          MYSQL_USER: u929750551_eatrofit
+          MYSQL_PASSWORD: Mx?OlKw2R/
         ports:
           - 3306:3306
         options: >-
@@ -33,9 +35,9 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y mysql-client
       - name: Validate SQL schema
         env:
-          MYSQL_PWD: ${{ secrets.MYSQL_ROOT_PASSWORD || 'root' }}
+          MYSQL_PWD: ${{ secrets.MYSQL_PASSWORD || 'Mx?OlKw2R/' }}
         run: |
-          mysql --no-defaults --user=root --host=127.0.0.1 --execute "SOURCE ./sql/schema.sql;"
+          mysql --no-defaults --user=u929750551_eatrofit --password="Mx?OlKw2R/" --host=127.0.0.1 --database=u929750551_eatrofit --execute "SOURCE ./sql/schema.sql;"
       - name: Install HTML linter
         run: npm install --no-audit --no-fund html-validate
       - name: Run frontend lint (HTML)
