@@ -41,13 +41,42 @@
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script>
-  fetch('../api/admin_get_feedback.php')
+  // Admin authentication check
+  const adminToken = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
+  if (!adminToken) {
+    window.location.href = '../public/login.html';
+  } else {
+    fetch('../api/admin_get_feedback.php', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    })
       .then(res => res.json())
       .then(data => {
         const tbody = document.querySelector('#feedbackTable tbody');
         data.feedback.forEach(fb => {
           const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${fb.id}</td><td>${fb.user_id}</td><td>${fb.feedback_text}</td><td>${fb.rating} <i class='bi bi-star-fill text-warning'></i></td><td>${fb.submitted_at}</td>`;
+          // ID
+          const tdId = document.createElement('td');
+          tdId.textContent = fb.id;
+          tr.appendChild(tdId);
+          // User
+          const tdUser = document.createElement('td');
+          tdUser.textContent = fb.user_id;
+          tr.appendChild(tdUser);
+          // Feedback
+          const tdFeedback = document.createElement('td');
+          tdFeedback.textContent = fb.feedback_text;
+          tr.appendChild(tdFeedback);
+          // Rating
+          const tdRating = document.createElement('td');
+          tdRating.textContent = fb.rating + ' ';
+          const star = document.createElement('i');
+          star.classList.add('bi', 'bi-star-fill', 'text-warning');
+          tdRating.appendChild(star);
+          tr.appendChild(tdRating);
+          // Date
+          const tdDate = document.createElement('td');
+          tdDate.textContent = fb.submitted_at;
+          tr.appendChild(tdDate);
           tbody.appendChild(tr);
         });
         // Initialize DataTable after data is loaded
@@ -67,6 +96,7 @@
           });
         });
       });
+  }
   </script>
 </body>
 </html>

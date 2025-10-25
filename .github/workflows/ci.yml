@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+  - uses: actions/checkout@v4
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -16,12 +16,17 @@ jobs:
       - name: Validate PHP syntax
         run: |
           find ./api -name '*.php' -exec php -l {} \;
+      - name: Install MySQL client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
       - name: Validate SQL schema
+        env:
+          MYSQL_PWD: ${{ secrets.MYSQL_ROOT_PASSWORD || 'root' }}
         run: |
-          cat ./sql/schema.sql
+          mysql --no-defaults --user=root --host=127.0.0.1 --execute "SOURCE ./sql/schema.sql;"
+      - name: Install HTML linter
+        run: npm install --no-audit --no-fund html-validate
       - name: Run frontend lint (HTML)
-        run: |
-          cat ./public/*.html
+        run: npx html-validate "public/**/*.html"
       - name: Install PHPUnit
         run: |
           composer require --dev phpunit/phpunit
@@ -29,17 +34,19 @@ jobs:
         run: |
           if [ -d tests ]; then ./vendor/bin/phpunit --testdox; fi
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
       - name: Install Cypress
         run: |
           npm install cypress --save-dev
+      - name: Install Xvfb
+        run: sudo apt-get install -y xvfb
       - name: Run Cypress tests
         run: |
-          if [ -d cypress ]; then npx cypress run; fi
+          if [ -d cypress ]; then xvfb-run --auto-servernum -- npx cypress run; fi
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: eatrofit-app
           path: |

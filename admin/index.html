@@ -51,15 +51,43 @@
     </div>
   </div>
   <script>
-    // Fetch admin stats from backend
-  fetch('../api/admin_stats.php')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('userCount').textContent = data.userCount;
-        document.getElementById('engagement').textContent = data.engagement;
-        document.getElementById('workoutCount').textContent = data.workoutCount;
-        document.getElementById('feedbackCount').textContent = data.feedbackCount;
-      });
+    // Admin authentication check
+    const adminToken = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
+    function setStatsError() {
+      document.getElementById('userCount').textContent = '--';
+      document.getElementById('engagement').textContent = '--';
+      document.getElementById('workoutCount').textContent = '--';
+      document.getElementById('feedbackCount').textContent = '--';
+      if (!document.getElementById('statsError')) {
+        const err = document.createElement('div');
+        err.id = 'statsError';
+        err.className = 'alert alert-danger mt-3';
+        err.textContent = 'Failed to load admin stats. Please try again or re-login.';
+        document.querySelector('.container').appendChild(err);
+      }
+    }
+    if (!adminToken) {
+      window.location.href = '../public/login.html';
+    } else {
+      fetch('../api/admin_stats.php', {
+        headers: { 'Authorization': 'Bearer ' + adminToken }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
+        .then(data => {
+          if (!data || typeof data !== 'object') throw new Error('Invalid data');
+          document.getElementById('userCount').textContent = data.userCount ?? '--';
+          document.getElementById('engagement').textContent = data.engagement ?? '--';
+          document.getElementById('workoutCount').textContent = data.workoutCount ?? '--';
+          document.getElementById('feedbackCount').textContent = data.feedbackCount ?? '--';
+        })
+        .catch(err => {
+          setStatsError();
+          console.error('Failed to load admin stats:', err);
+        });
+    }
   </script>
 </body>
 </html>

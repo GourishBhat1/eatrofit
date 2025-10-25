@@ -11,6 +11,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body class="bg-light">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
   <div class="container py-5">
     <div class="mb-3">
       <label for="scheduleDate" class="form-label">Schedule Workout (Demo):</label>
@@ -38,30 +41,78 @@
         const tbody = document.querySelector('#workoutsTable tbody');
         data.workouts.forEach(w => {
           const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${w.id}</td><td>${w.name}</td><td>${w.level}</td><td>${w.duration_min} min</td><td><button class='btn btn-danger btn-sm delete-workout'><i class='bi bi-trash'></i> Delete</button></td>`;
+          // ID
+          const tdId = document.createElement('td');
+          tdId.textContent = w.id;
+          tr.appendChild(tdId);
+          // Name
+          const tdName = document.createElement('td');
+          tdName.textContent = w.name;
+          tr.appendChild(tdName);
+          // Level
+          const tdLevel = document.createElement('td');
+          tdLevel.textContent = w.level;
+          tr.appendChild(tdLevel);
+          // Duration
+          const tdDuration = document.createElement('td');
+          tdDuration.textContent = w.duration_min + ' min';
+          tr.appendChild(tdDuration);
+          // Actions
+          const tdActions = document.createElement('td');
+          const delBtn = document.createElement('button');
+          delBtn.className = 'btn btn-danger btn-sm delete-workout';
+          delBtn.innerHTML = "<i class='bi bi-trash'></i> Delete";
+          tdActions.appendChild(delBtn);
+          tr.appendChild(tdActions);
           tbody.appendChild(tr);
         });
         // Initialize DataTable and Flatpickr after data is loaded
         $(document).ready(function() {
           $('#workoutsTable').DataTable();
           flatpickr('#scheduleDate', {dateFormat: 'Y-m-d'});
-          // SweetAlert2 for delete confirmation
+          // SweetAlert2 for delete confirmation and API call
           $('#workoutsTable').on('click', '.delete-workout', function() {
+            const row = $(this).closest('tr');
+            const workoutId = row.find('td').eq(0).text();
             Swal.fire({
               title: 'Are you sure?',
               text: 'This will permanently delete the workout.',
               icon: 'warning',
               showCancelButton: true,
               confirmButtonText: 'Yes, delete!',
-              cancelButtonText: 'Cancel'
+              cancelButtonText: 'Cancel',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              didOpen: () => {
+                Swal.getConfirmButton().disabled = false;
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                Swal.getConfirmButton().disabled = true;
+                fetch('../api/admin_delete_workout.php', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ id: workoutId })
+                })
+                .then(res => res.json())
+                .then(resp => {
+                  if (resp.success) {
+                    Swal.fire('Deleted!', 'Workout deleted.', 'success');
+                    $('#workoutsTable').DataTable().row(row).remove().draw();
+                  } else {
+                    Swal.fire('Error', resp.error || 'Delete failed', 'error');
+                  }
+                })
+                .catch(() => {
+                  Swal.fire('Error', 'Delete failed', 'error');
+                });
+              }
             });
           });
         });
       });
   </script>
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-  </script>
+  <!-- jQuery, DataTables already included above -->
 </body>
 </html>
