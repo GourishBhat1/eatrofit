@@ -106,7 +106,8 @@
             cancelButtonText: 'Cancel'
           }).then((result) => {
             if (result.isConfirmed) {
-              $.post({
+              $.ajax({
+                type: 'POST',
                 url: '../api/admin_delete_user.php',
                 data: {id: userId},
                 headers: { 'Authorization': 'Bearer ' + (adminToken || '') },
@@ -129,7 +130,6 @@
       });
     });
   </script>
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <!-- jQuery, DataTables, Toastr already included above -->
 </body>
 </html>

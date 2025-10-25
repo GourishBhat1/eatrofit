@@ -72,42 +72,50 @@
           flatpickr('#scheduleDate', {dateFormat: 'Y-m-d'});
           // SweetAlert2 for delete confirmation and API call
           $('#workoutsTable').on('click', '.delete-workout', function() {
-            const row = $(this).closest('tr');
-            const workoutId = row.find('td').eq(0).text();
-            Swal.fire({
-              title: 'Are you sure?',
-              text: 'This will permanently delete the workout.',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'Yes, delete!',
-              cancelButtonText: 'Cancel',
-              allowOutsideClick: false,
-              allowEscapeKey: false,
-              didOpen: () => {
-                Swal.getConfirmButton().disabled = false;
-              }
-            }).then((result) => {
-              if (result.isConfirmed) {
-                Swal.getConfirmButton().disabled = true;
-                fetch('../api/admin_delete_workout.php', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ id: workoutId })
-                })
-                .then(res => res.json())
-                .then(resp => {
-                  if (resp.success) {
-                    Swal.fire('Deleted!', 'Workout deleted.', 'success');
-                    $('#workoutsTable').DataTable().row(row).remove().draw();
-                  } else {
-                    Swal.fire('Error', resp.error || 'Delete failed', 'error');
+              const row = $(this).closest('tr');
+              const workoutId = row.find('td').eq(0).text();
+              const adminToken = localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token');
+              Swal.fire({
+                title: 'Are you sure?',
+                text: 'This will permanently delete the workout.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete!',
+                cancelButtonText: 'Cancel',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                  Swal.getConfirmButton().disabled = false;
+                }
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  if (!adminToken) {
+                    Swal.fire('Error', 'Not authenticated', 'error');
+                    return;
                   }
-                })
-                .catch(() => {
-                  Swal.fire('Error', 'Delete failed', 'error');
-                });
-              }
-            });
+                  Swal.getConfirmButton().disabled = true;
+                  fetch('../api/admin_delete_workout.php', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + adminToken
+                    },
+                    body: JSON.stringify({ id: workoutId })
+                  })
+                  .then(res => res.json())
+                  .then(resp => {
+                    if (resp.success) {
+                      Swal.fire('Deleted!', 'Workout deleted.', 'success');
+                      $('#workoutsTable').DataTable().row(row).remove().draw();
+                    } else {
+                      Swal.fire('Error', resp.error || 'Delete failed', 'error');
+                    }
+                  })
+                  .catch(() => {
+                    Swal.fire('Error', 'Delete failed', 'error');
+                  });
+                }
+              });
           });
         });
       });
